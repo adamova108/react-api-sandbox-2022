@@ -1,10 +1,12 @@
 import fs from 'fs'
+import { v4 as uuidv4 } from 'uuid'
 
 export class BaseRepository<Model extends {[key: string]: unknown, id: string}> {
 
     protected inMemoryData: Array<Model> = [];
     pathToJSONFolder: string;
     file: string;
+    disableAutoWriteToDisk = false;
 
     constructor (file: string) {
         this.file = file;
@@ -53,7 +55,7 @@ export class BaseRepository<Model extends {[key: string]: unknown, id: string}> 
     }
 
     async add(params: Omit<Model, 'id'>) {
-        const newId = new Date().getTime().toString();
+        const newId = uuidv4();
         const newRecord = {
             ...params as Model,
             id: newId
@@ -61,7 +63,13 @@ export class BaseRepository<Model extends {[key: string]: unknown, id: string}> 
 
         this.inMemoryData.push(newRecord);
         
-        await this.serializeAndSaveToDisk();
+        if ( !this.disableAutoWriteToDisk ) {
+            await this.serializeAndSaveToDisk();
+        }
         return newRecord;
+    }
+
+    getByUserId (userId: string) {
+        return this.inMemoryData.filter((item) => item.user_id === userId)
     }
 }
