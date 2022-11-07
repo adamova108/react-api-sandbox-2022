@@ -1,15 +1,27 @@
+import { jsonDir } from '../config';
 import { BaseRepository } from './baseRepository';
 
-type InvoiceData = {
+export type InvoiceData = {
     id: string
     invoice_number: string
     user_id: string
     client_id: string
     date: number
+    dueDate: number
     value: number
 };
 
 export class InvoicesRepository extends BaseRepository<InvoiceData> {
+    private static _instance: InvoicesRepository;
+    
+    static async getInstance () {
+        if (!InvoicesRepository._instance) {
+            InvoicesRepository._instance = new InvoicesRepository();
+            await InvoicesRepository._instance.init(jsonDir);
+        }
+        return InvoicesRepository._instance;
+    }
+
     constructor () {
         super("invoices.json");
     }
