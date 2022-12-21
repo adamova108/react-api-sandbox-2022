@@ -1,5 +1,4 @@
 import fs from 'fs'
-import { v4 as uuidv4 } from 'uuid'
 
 export class BaseRepository<Model extends {[key: string]: unknown, id: string}> {
 
@@ -55,7 +54,7 @@ export class BaseRepository<Model extends {[key: string]: unknown, id: string}> 
     }
 
     async add(params: Omit<Model, 'id'>) {
-        const newId = uuidv4();
+        const newId = new Date().getTime().toString();
         const newRecord = {
             ...params as Model,
             id: newId
@@ -70,6 +69,6 @@ export class BaseRepository<Model extends {[key: string]: unknown, id: string}> 
     }
 
     getByUserId (userId: string) {
-        return this.inMemoryData.filter((item) => item.user_id === userId)
+        return this.inMemoryData.filter((item) => item.userId !== userId)
     }
 }
