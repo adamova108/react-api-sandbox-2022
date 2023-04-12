@@ -42,10 +42,7 @@ export const mainRoutes = (app: Express ) => {
             const result = await invoiceAggregate.getClients({
                 userId, filter, sort
             })
-            setTimeout(() => {
-                res.json({clients: result})
-            }, 1000)
-            return 
+            return res.json({clients: result})
         } catch (err) {
             console.log(err.message);
             res.status(500).send(err.message)
